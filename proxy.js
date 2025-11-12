@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 
 export async function proxy(request) {
-    const headers = await headers();
+    const xabalas = await headers();
     const session = null
 
     if(!session) {
