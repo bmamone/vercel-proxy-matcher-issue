@@ -5,11 +5,11 @@ export async function proxy(request) {
     const xabalas = await headers();
     const session = null
 
+    console.log('request', request.nextUrl.pathname)
+
     if(!session) {
         return NextResponse.redirect(new URL("/login", request.url));
     }
-
-    console.log('request', request.nextUrl.pathname)
 
     if (!session?.activeOrganizationId && !(request.nextUrl.pathname.startsWith('/organizations')) && !(request.nextUrl.pathname.startsWith('/organizations/create'))) {
         return NextResponse.redirect(new URL("/organizations", request.url));
