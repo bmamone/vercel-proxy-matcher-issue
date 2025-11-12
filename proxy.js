@@ -1,21 +1,26 @@
-import { NextResponse, NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from "next/server";
+import { headers } from "next/headers";
 
-// This function can be marked `async` if using `await` inside
 export async function proxy(request) {
-    console.log('Proxying to', request.nextUrl.pathname, request.url)
-    return NextResponse.next()
+    const headers = await headers();
+    const session = null
+
+    if(!session) {
+        return NextResponse.redirect(new URL("/login", request.url));
+    }
+
+    console.log('request', request.nextUrl.pathname)
+
+    if (!session?.activeOrganizationId && !(request.nextUrl.pathname.startsWith('/organizations')) && !(request.nextUrl.pathname.startsWith('/organizations/create'))) {
+        return NextResponse.redirect(new URL("/organizations", request.url));
+    }
+
+    return NextResponse.next();
 }
 
 export const config = {
     matcher: [
         '/', 
-        /*
-         * Match all request paths except for the ones starting with:
-         * - api (API routes)
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico, sitemap.xml, robots.txt (metadata files)
-         */
-        '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+        '/((?!api|_next/static|_next/image|login|favicon.ico|sitemap.xml|robots.txt).*)',
     ],
-}
+};
